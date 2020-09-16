@@ -9,12 +9,23 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
+      <ion-title size="large">News</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  <ion-list *ngFor="let news of allNews">
+      <ion-card (click)="navigateToNews(news._id)">
+        <ion-card-header>
+          <ion-card-subtitle>N° {{ news.number }}</ion-card-subtitle>
+          <ion-card-subtitle>Author: {{ news.author }}</ion-card-subtitle>
+          <ion-card-title>{{ news.title }}</ion-card-title>
+        </ion-card-header>
+      </ion-card>
+  </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button>
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
