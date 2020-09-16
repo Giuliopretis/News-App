@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="home"></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ news.number }}</ion-title>
+    <ion-title>N° {{ news.number }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -13,7 +13,8 @@
     <ion-item>
       <!-- <ion-icon name="pin" slot="start"></ion-icon> -->
       <ion-label>{{ news.author }}</ion-label>
-      <ion-button fill="outline" slot="end">Modify</ion-button>
+      <ion-button fill="outline" slot="end" (click)="presentAlertDelete()">Delete</ion-button>
+      <ion-button fill="outline" slot="end" (click)="presentAlertConfirm()">Modify</ion-button>
     </ion-item>
   
     <ion-card-content>

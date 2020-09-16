@@ -4,8 +4,12 @@ export class News {
     author: string;
     number: number;
 
-    constructor() {
-
+    constructor(data) {
+        console.log(data);
+        
+        this.title = data.title
+        this.author = data.author
+        this.number = data.number
     }
 
     
