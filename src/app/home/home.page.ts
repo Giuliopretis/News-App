@@ -13,6 +13,7 @@ import { NewsService } from '../news.service';
 export class HomePage implements OnInit {
 
   allNews: any = []
+  // allNews: any = []
   NEWS_URL = 'http://localhost:3000/news'
 
   constructor(
@@ -26,9 +27,21 @@ export class HomePage implements OnInit {
     this.retrieveNews()
   }
 
-  retrieveNews() {
+  async doRefresh(event) {
+    const op = await this.retrieveNews()
+
+    if (op) {
+      event.target.complete();
+    }
+  }
+
+  async retrieveNews() {
     this.httpClient.get<News[]>(this.NEWS_URL)
       .subscribe(res => {
+        // res.forEach(el => {
+        //   const news = new News(el)
+        //   this.allNews.push(news)
+        // })
         this.allNews = res;
       },
         error => {
@@ -36,10 +49,10 @@ export class HomePage implements OnInit {
           return error
         }
       );
+    return []
   }
 
   navigateToNews(id) {
-    // this.nav.navigateRoot('/news')
     this.router.navigate([`/news/${id}`])
   }
 
@@ -47,7 +60,7 @@ export class HomePage implements OnInit {
     this.httpClient.post(this.NEWS_URL, body)
       .subscribe(
         (val) => {
-          
+
         },
         response => {
           console.log("POST call in error", response);
@@ -91,7 +104,7 @@ export class HomePage implements OnInit {
           text: 'Cancel',
           role: 'cancel',
           cssClass: 'secondary',
-          handler: () => {}
+          handler: () => { }
         }, {
           text: 'Add',
           handler: (data) => {

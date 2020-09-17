@@ -41,8 +41,6 @@ export class NewsPage implements OnInit {
     this.httpClient.get(this.NEWS_URL + '/' + id)
       .subscribe(res => {
         this.news = new News(res);
-        console.log(this.news);
-
       },
         error => {
           console.log(error);
@@ -60,19 +58,7 @@ export class NewsPage implements OnInit {
           value: this.news.title,
           type: 'text',
           placeholder: 'Add title'
-        },
-        // {
-        //   name: 'author',
-        //   value: this.news.author,
-        //   type: 'text',
-        //   placeholder: 'Add the author'
-        // },
-        // {
-        //   name: 'number',
-        //   value: this.news.number,
-        //   type: 'number',
-        //   placeholder: 'The news number'
-        // }
+        }
       ],
       buttons: [
         {
