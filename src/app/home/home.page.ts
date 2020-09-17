@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, NavController } from '@ionic/angular';
+import { AlertController, NavController, ToastController } from '@ionic/angular';
 import { News } from '../News';
 import { NewsService } from '../news.service';
 
@@ -18,9 +18,9 @@ export class HomePage implements OnInit {
 
   constructor(
     private newsService: NewsService,
-    private httpClient: HttpClient,
     private router: Router,
-    private alertController: AlertController) { }
+    private alertController: AlertController,
+    private toastController: ToastController) { }
 
 
   ngOnInit() {
@@ -36,38 +36,19 @@ export class HomePage implements OnInit {
   }
 
   async retrieveNews() {
-    this.httpClient.get<News[]>(this.NEWS_URL)
-      .subscribe(res => {
-        // res.forEach(el => {
-        //   const news = new News(el)
-        //   this.allNews.push(news)
-        // })
-        this.allNews = res;
-      },
-        error => {
-          console.log(error);
-          return error
-        }
-      );
-    return []
+    const cose = await this.newsService.getAllNews()
+    return this.allNews = cose
   }
 
   navigateToNews(id) {
     this.router.navigate([`/news/${id}`])
   }
 
-  addNewNews(body) {
-    this.httpClient.post(this.NEWS_URL, body)
-      .subscribe(
-        (val) => {
-
-        },
-        response => {
-          console.log("POST call in error", response);
-        },
-        () => {
-          console.log("The POST observable is now completed.");
-        });
+  async addNewNews(body) {
+    const added = await this.newsService.addNews(body)
+    if (added) {
+      this.presentToast(added)
+    }
   }
 
   cerateBodyForNews(data) {
@@ -115,6 +96,14 @@ export class HomePage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  async presentToast(news) {
+    const toast = await this.toastController.create({
+      message: `News N°${news.number} added!`,
+      duration: 2000
+    });
+    toast.present();
   }
 
   // getNews(): Promise<News[]> {

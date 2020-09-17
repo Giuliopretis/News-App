@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
 import { News } from '../News';
+import { NewsService } from '../news.service';
 
 @Component({
   selector: 'app-news',
@@ -16,9 +17,10 @@ export class NewsPage implements OnInit {
   newsId
 
   constructor(
-    private httpClient: HttpClient,
+    private toastController: ToastController,
     private activatedRoute: ActivatedRoute,
     private alertController: AlertController,
+    private newsService: NewsService,
     private router: Router) {
 
   }
@@ -36,17 +38,10 @@ export class NewsPage implements OnInit {
     return id;
   }
 
-  getNewsInfo() {
+  async getNewsInfo() {
     const id = this.getIdFromUrl()
-    this.httpClient.get(this.NEWS_URL + '/' + id)
-      .subscribe(res => {
-        this.news = new News(res);
-      },
-        error => {
-          console.log(error);
-          return error
-        }
-      );
+    const news = await this.newsService.getNewsById(id)
+    this.news = new News(news)
   }
 
   async presentAlertConfirm() {
@@ -108,38 +103,42 @@ export class NewsPage implements OnInit {
     this.modifyNewsData(body)
   }
 
-  modifyNewsData(body) {
+  async modifyNewsData(body) {
     const id = this.getIdFromUrl()
-    this.httpClient.patch(this.NEWS_URL + '/' + id, body)
-      .subscribe(
-        (val) => {
-          this.news = val
-        },
-        response => {
-          console.log("POST call in error", response);
-        },
-        () => {
-          console.log("The POST observable is now completed.");
-        });
+    const news = await this.newsService.patchNews(id, body)
+    if (news) {
+      this.news = news
+      this.presentModifiedToast()
+    }
   }
 
-  deleteNews() {
+  async deleteNews() {
     const id = this.getIdFromUrl()
-    this.httpClient.delete(this.NEWS_URL + '/' + id)
-      .subscribe(
-        (val) => {
-          this.goToHome()
-        },
-        response => {
-          console.log("POST call in error", response);
-        },
-        () => {
-          console.log("The POST observable is now completed.");
-        });
+    const news = await this.newsService.deleteNews(id)
+    if (news) {
+      this.goToHome()
+      this.presentDeletedToast()
+    }
   }
 
   goToHome() {
     this.router.navigate([`home`])
+  }
+
+  async presentModifiedToast() {
+    const toast = await this.toastController.create({
+      message: `News successfully modified!`,
+      duration: 2000
+    });
+    toast.present();
+  }
+
+  async presentDeletedToast() {
+    const toast = await this.toastController.create({
+      message: `News successfully deleted!`,
+      duration: 2000
+    });
+    toast.present();
   }
 
 }
