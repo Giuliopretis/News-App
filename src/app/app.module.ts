@@ -11,6 +11,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { HTTP } from '@ionic-native/http/ngx';
 import { NavParams } from '@ionic/angular';
+import { EventEmitter } from 'events';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { NavParams } from '@ionic/angular';
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     HTTP,
-    NavParams
+    NavParams,
+    EventEmitter
   ],
   bootstrap: [AppComponent]
 })

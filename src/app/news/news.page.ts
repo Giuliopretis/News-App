@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
+import { AlertsService } from '../alerts.service';
 import { News } from '../News';
 import { NewsService } from '../news.service';
 
@@ -21,7 +22,8 @@ export class NewsPage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private alertController: AlertController,
     private newsService: NewsService,
-    private router: Router) {
+    private router: Router,
+    private alertService: AlertsService) {
 
   }
 
@@ -108,7 +110,7 @@ export class NewsPage implements OnInit {
     const news = await this.newsService.patchNews(id, body)
     if (news) {
       this.news = news
-      this.presentModifiedToast()
+      this.alertService.presentModifiedToast()
     }
   }
 
@@ -117,28 +119,12 @@ export class NewsPage implements OnInit {
     const news = await this.newsService.deleteNews(id)
     if (news) {
       this.goToHome()
-      this.presentDeletedToast()
+      this.alertService.presentDeletedToast()
     }
   }
 
   goToHome() {
     this.router.navigate([`home`])
-  }
-
-  async presentModifiedToast() {
-    const toast = await this.toastController.create({
-      message: `News successfully modified!`,
-      duration: 2000
-    });
-    toast.present();
-  }
-
-  async presentDeletedToast() {
-    const toast = await this.toastController.create({
-      message: `News successfully deleted!`,
-      duration: 2000
-    });
-    toast.present();
   }
 
 }

@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, NavController, ToastController } from '@ionic/angular';
+import { AlertsService } from '../alerts.service';
 import { News } from '../News';
 import { NewsService } from '../news.service';
 
@@ -20,7 +21,7 @@ export class HomePage implements OnInit {
     private newsService: NewsService,
     private router: Router,
     private alertController: AlertController,
-    private toastController: ToastController) { }
+    private alertService: AlertsService) { }
 
 
   ngOnInit() {
@@ -47,7 +48,7 @@ export class HomePage implements OnInit {
   async addNewNews(body) {
     const added = await this.newsService.addNews(body)
     if (added) {
-      this.presentToast(added)
+      this.alertService.presentAddedNewsToast(added)
     }
   }
 
@@ -59,6 +60,10 @@ export class HomePage implements OnInit {
     }
     this.addNewNews(body)
   }
+
+  // openAlert() {
+  //   this.alertService.presentAlertAddingNews()
+  // }
 
   async presentAlertConfirm() {
     const alert = await this.alertController.create({
@@ -89,7 +94,10 @@ export class HomePage implements OnInit {
         }, {
           text: 'Add',
           handler: (data) => {
-            this.addNewNews(data);
+            if (this.validateAlertInputs(data)) {
+              return this.addNewNews(data);
+            }
+            this.alertService.presentErrorAddingNews()
           }
         }
       ]
@@ -98,12 +106,11 @@ export class HomePage implements OnInit {
     await alert.present();
   }
 
-  async presentToast(news) {
-    const toast = await this.toastController.create({
-      message: `News N°${news.number} added!`,
-      duration: 2000
-    });
-    toast.present();
+  validateAlertInputs(data) {
+    if (data.title || data.auhtor || data.number === '') {
+      return false
+    }
+    return true
   }
 
   // getNews(): Promise<News[]> {
