@@ -1,35 +1,36 @@
-
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { AlertController, NavController, ToastController } from '@ionic/angular';
-import { AlertsService } from '../alerts.service';
-import { News } from '../News';
-import { NewsService } from '../news.service';
+import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
+import {
+  AlertController,
+  NavController,
+  ToastController,
+} from "@ionic/angular";
+import { AlertsService } from "../alerts.service";
+import { News } from "../News";
+import { NewsService } from "../news.service";
 
 @Component({
-  selector: 'app-home',
-  templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
+  selector: "app-home",
+  templateUrl: "home.page.html",
+  styleUrls: ["home.page.scss"],
 })
 export class HomePage implements OnInit {
-
-  allNews: any = []
-  // allNews: any = []
-  NEWS_URL = 'http://localhost:3000/news'
+  allNews: any = [];
+  NEWS_URL = "http://localhost:3000/news";
 
   constructor(
     private newsService: NewsService,
     private router: Router,
     private alertController: AlertController,
-    private alertService: AlertsService) { }
-
+    private alertService: AlertsService
+  ) {}
 
   ngOnInit() {
-    this.retrieveNews()
+    this.retrieveNews();
   }
 
   async doRefresh(event) {
-    const op = await this.retrieveNews()
+    const op = await this.retrieveNews();
 
     if (op) {
       event.target.complete();
@@ -37,18 +38,18 @@ export class HomePage implements OnInit {
   }
 
   async retrieveNews() {
-    const cose = await this.newsService.getAllNews()
-    return this.allNews = cose
+    const cose = await this.newsService.getAllNews();
+    return (this.allNews = cose);
   }
 
   navigateToNews(id) {
-    this.router.navigate([`/news/${id}`])
+    this.router.navigate([`/news/${id}`]);
   }
 
   async addNewNews(body) {
-    const added = await this.newsService.addNews(body)
+    const added = await this.newsService.addNews(body);
     if (added) {
-      this.alertService.presentAddedNewsToast(added)
+      this.alertService.presentAddedNewsToast(added);
     }
   }
 
@@ -56,61 +57,70 @@ export class HomePage implements OnInit {
     const body = {
       title: data.title,
       author: data.author,
-      number: data.number,
-    }
-    this.addNewNews(body)
+      number: parseInt(data.number),
+    };
+    this.addNewNews(body);
   }
 
   // openAlert() {
   //   this.alertService.presentAlertAddingNews()
   // }
 
+  // da spostare in un service apposito
   async presentAlertConfirm() {
     const alert = await this.alertController.create({
-      header: 'Add a news!',
+      header: "Add a news!",
       inputs: [
         {
-          name: 'title',
-          type: 'text',
-          placeholder: 'Add title'
+          name: this.alertService.TITLE_NAME,
+          type: "text",
+          placeholder: "Add title",
         },
         {
-          name: 'author',
-          type: 'text',
-          placeholder: 'Add the author'
+          name: this.alertService.AUTHOR_NAME,
+          type: "text",
+          placeholder: "Add the author",
         },
         {
-          name: 'number',
-          type: 'number',
-          placeholder: 'The news number'
-        }
+          name: this.alertService.NUMBER_NAME,
+          type: "number",
+          placeholder: "The news number",
+        },
       ],
       buttons: [
         {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => { }
-        }, {
-          text: 'Add',
+          text: "Cancel",
+          role: "cancel",
+          cssClass: "secondary",
+          handler: () => {},
+        },
+        {
+          text: "Add",
           handler: (data) => {
+            console.log(data);
+
             if (this.validateAlertInputs(data)) {
               return this.addNewNews(data);
             }
-            this.alertService.presentErrorAddingNews()
-          }
-        }
-      ]
+            this.alertService.presentErrorAddingNews();
+          },
+        },
+      ],
     });
 
     await alert.present();
   }
 
   validateAlertInputs(data) {
-    if (data.title || data.auhtor || data.number === '') {
-      return false
+    if (
+      data.title === "" ||
+      data.author === "" ||
+      parseInt(data.number) === 0 ||
+      !data.number
+    ) {
+      return false;
     }
-    return true
+    return true;
   }
 
   // getNews(): Promise<News[]> {

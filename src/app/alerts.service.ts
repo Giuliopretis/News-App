@@ -84,6 +84,7 @@ export class AlertsService {
         }, {
           text: 'Add',
           handler: (data) => {
+            // trovare un modo per triggerare funzioni della home
             this.homePage.addNewNews(data);
           }
         }
